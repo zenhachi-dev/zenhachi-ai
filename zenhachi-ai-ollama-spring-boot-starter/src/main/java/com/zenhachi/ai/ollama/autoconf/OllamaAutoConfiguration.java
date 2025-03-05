@@ -13,7 +13,6 @@ import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
@@ -23,11 +22,10 @@ import java.util.Map;
 
 @Slf4j
 @AutoConfiguration
-@EnableConfigurationProperties(OllamaProperties.class)
 public class OllamaAutoConfiguration {
 
     @Bean
-    public BeanFactoryPostProcessor registerOllamaClients(Environment environment) {
+    public BeanFactoryPostProcessor registerOllamaBeans(Environment environment) {
         return beanFactory -> {
             OllamaProperties properties = Binder.get(environment).bind("zenhachi.ai", Bindable.of(OllamaProperties.class)).orElse(new OllamaProperties());
 
@@ -39,7 +37,7 @@ public class OllamaAutoConfiguration {
 
                     if (clientProperties.getValue().getChat() != null) {
                         for (Map.Entry<String, OllamaChatProperties> modelProperties : clientProperties.getValue().getChat().entrySet()) {
-                            beanFactory.registerSingleton(modelProperties.getKey(), buildOllamaChatClient(modelProperties.getValue(), ollamaClient));
+                            beanFactory.registerSingleton(modelProperties.getKey(), buildOllamaChatModel(modelProperties.getValue(), ollamaClient));
                             log.info("Registered OllamaChatModel bean with name: {}", modelProperties.getKey());
                         }
                     }
@@ -52,7 +50,7 @@ public class OllamaAutoConfiguration {
         return new OllamaApi(properties.getBaseUrl());
     }
 
-    private OllamaChatModel buildOllamaChatClient(OllamaChatProperties properties, OllamaApi aiClient) {
+    private OllamaChatModel buildOllamaChatModel(OllamaChatProperties properties, OllamaApi aiClient) {
         return OllamaChatModel.builder()
                 .ollamaApi(aiClient)
                 .defaultOptions(properties.getOptions())
