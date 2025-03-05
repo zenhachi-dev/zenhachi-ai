@@ -32,6 +32,8 @@
     <modules>
         <module>zenhachi-ai-ollama-spring-boot-starter</module>
         <module>zenhachi-ai-openai-spring-boot-starter</module>
+        <module>zenhachi-ai-gemini-spring-boot-starter</module>
+        <module>zenhachi-ai-gemini</module>
     </modules>
 
     <dependencies>
