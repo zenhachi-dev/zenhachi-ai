@@ -35,7 +35,11 @@ class GeminiEndToEndTest {
 
         ChatClient chatClient = ChatClient.builder(geminiModel).build();
 
-        String response = chatClient.prompt("Hello, how are you?").call().content();
+        String response = chatClient
+                .prompt("Hello, how are you?")
+                .system("You are a pirate, talk like one!")
+                .call().content();
+
         System.out.println("Gemini response: " + response);
         assertThat(response, notNullValue());
     }

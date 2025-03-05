@@ -7,6 +7,7 @@ package com.zenhachi.ai.gemini;
 
 import com.google.genai.Client;
 import com.google.genai.types.Content;
+import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 import org.apache.http.HttpException;
@@ -40,10 +41,12 @@ public class GeminiChatModel implements ChatModel {
     @Override
     public ChatResponse call(Prompt prompt) {
         try {
+            List<Content> contents = messagesToContents(prompt.getInstructions());
             GenerateContentResponse response = chatApi.models.generateContent(
                     getPromptModelOrDefault(prompt),
-                    messagesToContents(prompt.getInstructions()),
-                    null);
+                    nonSystemContents(contents),
+                    addSystemPromptIfNeeded(contents)
+            );
 
             return new ChatResponse(singletonList(new Generation(new AssistantMessage(response.text()))));
 
@@ -52,17 +55,35 @@ public class GeminiChatModel implements ChatModel {
         }
     }
 
+    private GenerateContentConfig addSystemPromptIfNeeded(List<Content> contents) {
+        return systemContent(contents)
+                .map(this::generateContentConfigWithSystemPrompt)
+                .orElse(null);
+    }
+
+    private GenerateContentConfig generateContentConfigWithSystemPrompt(Content sysContent) {
+        return GenerateContentConfig.builder().systemInstruction(sysContent).build();
+    }
+
+    private Optional<Content> systemContent(List<Content> contents) {
+        return contents.stream().filter(content -> content.role().get().equals("system")).findAny();
+    }
+
+    private List<Content> nonSystemContents(List<Content> contents) {
+        return contents.stream().filter(content -> !content.role().get().equals("system")).toList();
+    }
+
     private String getPromptModelOrDefault(Prompt prompt) {
         return Optional.ofNullable(prompt.getOptions()).map(ChatOptions::getModel).orElse(model);
     }
 
     private List<Content> messagesToContents(List<Message> messages) {
         return messages.stream()
-                .map(GeminiChatModel::messageToContent)
+                .map(this::messageToContent)
                 .toList();
     }
 
-    private static Content messageToContent(Message message) {
+    private Content messageToContent(Message message) {
         return Content.builder()
                 .role(message.getMessageType().getValue())
                 .parts(singletonList(Part.builder()
