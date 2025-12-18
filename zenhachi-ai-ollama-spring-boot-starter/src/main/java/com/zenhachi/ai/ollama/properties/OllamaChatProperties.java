@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.ai.ollama.api.OllamaModel;
-import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 @Data
@@ -30,7 +30,7 @@ public class OllamaChatProperties {
      * generative's defaults.
      */
     @NestedConfigurationProperty
-    private OllamaOptions options = OllamaOptions.builder().model(OllamaModel.MISTRAL.id()).build();
+    private OllamaChatOptions options = OllamaChatOptions.builder().model(OllamaModel.MISTRAL.id()).build();
 
     public String getModel() {
         return this.options.getModel();

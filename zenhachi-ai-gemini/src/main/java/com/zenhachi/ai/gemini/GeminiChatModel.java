@@ -40,19 +40,15 @@ public class GeminiChatModel implements ChatModel {
 
     @Override
     public ChatResponse call(Prompt prompt) {
-        try {
-            List<Content> contents = messagesToContents(prompt.getInstructions());
-            GenerateContentResponse response = chatApi.models.generateContent(
-                    getPromptModelOrDefault(prompt),
-                    nonSystemContents(contents),
-                    addSystemPromptIfNeeded(contents)
-            );
+        List<Content> contents = messagesToContents(prompt.getInstructions());
+        GenerateContentResponse response = chatApi.models.generateContent(
+                getPromptModelOrDefault(prompt),
+                nonSystemContents(contents),
+                addSystemPromptIfNeeded(contents)
+        );
 
-            return new ChatResponse(singletonList(new Generation(new AssistantMessage(response.text()))));
+        return new ChatResponse(singletonList(new Generation(new AssistantMessage(response.text()))));
 
-        } catch (IOException | HttpException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private GenerateContentConfig addSystemPromptIfNeeded(List<Content> contents) {

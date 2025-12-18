@@ -47,7 +47,7 @@ public class OllamaAutoConfiguration {
     }
 
     private OllamaApi buildOllamaClient(OllamaClientProperties properties) {
-        return new OllamaApi(properties.getBaseUrl());
+        return OllamaApi.builder().baseUrl(properties.getBaseUrl()).build();
     }
 
     private OllamaChatModel buildOllamaChatModel(OllamaChatProperties properties, OllamaApi aiClient) {
