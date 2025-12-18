@@ -17,17 +17,17 @@ To add the maven dependencies, we are using the same versions as spring-ai:
     <dependency>
         <groupId>com.zenhachi</groupId>
         <artifactId>zenhachi-ai-ollama-spring-boot-starter</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>com.zenhachi</groupId>
         <artifactId>zenhachi-ai-openai-spring-boot-starter</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>com.zenhachi</groupId>
         <artifactId>zenhachi-ai-gemini-spring-boot-starter</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
